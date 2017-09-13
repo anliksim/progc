@@ -24,6 +24,8 @@
 #define OUTFILE "stdout.txt"
 /// @brief The name of the STDERR text file.
 #define ERRFILE "stderr.txt"
+/// @brief The name of the input text file for comparison
+#define INPUT "input"
 
 // setup & cleanup
 static int setup(void)
@@ -61,28 +63,22 @@ static void test_main_with_arg(void)
 	CU_ASSERT_EQUAL(exit_code, 0 << 8);
 }
 
-static void test_main_with_895_0_rest(void)
+static void test_conversion(void)
 {
-	// arrange
-	const char *out_txt[] =
-		{ "CHF 8.95:\n"
-		, "- 1 x 5.00\n"
-		, "- 1 x 2.00\n"
-		, "- 1 x 1.00\n"
-		, "- 1 x 0.50\n"
-		, "- 2 x 0.20\n"
-		, "- 0 x 0.10\n"
-		, "- 1 x 0.05\n"
-		, "Kein Rest\n"
-		};
 	const char *err_txt[] = {};
-	// act
+	
 	int exit_code = system(XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+	
 	// assert
-	CU_ASSERT_EQUAL(exit_code, 0 << 8);
-	
-	
-	assert_lines(OUTFILE, out_txt, sizeof(out_txt)/sizeof(*out_txt));
+	CU_ASSERT_EQUAL(exit_code, 0);
+
+	(void) printf("\ndiff:\n");	
+	(void) printf("--------------------------\n");	
+	int diff_exit = system("diff " OUTFILE " input");
+	(void) printf("--------------------------\n");	
+
+	CU_ASSERT_EQUAL(diff_exit, 0);
+
 	assert_lines(ERRFILE, err_txt, sizeof(err_txt)/sizeof(*err_txt));
 }
 
@@ -95,5 +91,6 @@ int main(void)
 	TestMainBasic("Degree Conversion", setup, teardown
 				  , test_main_with_no_arg
 				  , test_main_with_arg
+				  , test_conversion
 				  );
 }
