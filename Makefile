@@ -5,6 +5,7 @@ NL         := $(EMPTY)\\n$(EMPTY)
 LABS       := $(sort $(wildcard lab??-* testlib))
 
 default:
+	@if [ `uname -o` = 'Cygwin' ]; then echo "Cygwin"; else echo "Linux"; fi
 	@echo "**** PROGC Labs ****"
 	@echo "$(subst $(SPACE),$(NL),$(LABS))"
 	@echo ""
