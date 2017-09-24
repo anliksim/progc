@@ -25,4 +25,6 @@ int is_valid_day(int day, int month, int is_leap_year);
 
 int is_valid_date(Date date, int is_leap);
 
+Date roll_day(Date date, int is_leap);
+
 #endif //S02_DAYS_DAYS_H

@@ -90,6 +90,33 @@ static void test_valid_day_no_leap(void) {
     }
 }
 
+static void test_valid_day_leap(void) {
+    CU_ASSERT_EQUAL(is_valid_day(29, 2, 1), 1);
+}
+
+static void assert_date(Date date, int is_leap, int expected) {
+    CU_ASSERT_EQUAL(is_valid_date(date, is_leap), expected);
+}
+
+static void test_valid_date(void) {
+    assert_date((Date) {27, 2, 1995}, 0, 1);
+    assert_date((Date) {29, 2, 1995}, 1, 1);
+    assert_date((Date) {29, 2, 1995}, 0, 0);
+}
+
+static void assert_rolled_date(Date start, Date expected) {
+
+    Date rolled = roll_day(start, is_leap_year(start.year));
+
+    CU_ASSERT_EQUAL(rolled.day, expected.day);
+    CU_ASSERT_EQUAL(rolled.month, expected.month);
+    CU_ASSERT_EQUAL(rolled.year, expected.year);
+}
+
+static void test_roll_end_of_month(void) {
+    assert_rolled_date((Date) {31, 1, 2017}, (Date) {1, 2, 2017});
+}
+
 /*
  * @brief Registers and runs the tests.
  */
@@ -100,6 +127,8 @@ int main(void) {
                   test_leap_year,
                   test_valid_year,
                   test_valid_month,
-                  test_valid_day_no_leap
+                  test_valid_day_no_leap,
+                  test_valid_day_leap,
+                  test_valid_date
     );
 }

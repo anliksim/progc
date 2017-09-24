@@ -15,25 +15,19 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    if (start_date.year < min_year) {
-        (void) printf("Invalid year.\n");
-        return EXIT_FAILURE;
-    }
-
-    if (start_date.month > Dec) {
-        (void) printf("Invalid month.\n");
-        return EXIT_FAILURE;
-    }
-
     int is_leap = is_leap_year(start_date.year);
 
+    int is_valid = is_valid_date(start_date, is_leap);
 
-    if (start_date.day > max_day[start_date.month - 1] + is_leap) {
-        (void) printf("Invalid day.\n");
+    if (!is_valid) {
+        (void) printf("Invalid date.\n");
         return EXIT_FAILURE;
     }
 
-    (void) printf("%d %d %d\n", start_date.day, start_date.month, start_date.year);
+
+    Date end_date = roll_day(start_date, is_leap);
+
+    (void) printf("%d %d %d\n", end_date.day, end_date.month, end_date.year);
 
 
     return EXIT_SUCCESS;

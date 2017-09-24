@@ -23,3 +23,17 @@ int is_valid_date(Date date, int is_leap) {
            & is_valid_month(date.month)
            & is_valid_day(date.day, date.month, is_leap);
 }
+
+
+Date roll_day(Date date, int is_leap) {
+
+    if (date.day == max_day[date.month - 1]) {
+
+        date.day = 1;
+        date.month = date.month + 1;
+
+    } else {
+        date.day += 1;
+    }
+    return date;
+}
