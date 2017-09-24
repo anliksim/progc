@@ -16,6 +16,7 @@ int main() {
 
     (void) printf("F'heit   Celsius\n");
     (void) printf("----------------\n");
+
     for (int i = 0; i <= loops; i++) {
         (void) printf("%5d     %6.2f\n", current, toCelsius((current)));
         current += 20;
