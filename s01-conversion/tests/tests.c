@@ -43,10 +43,8 @@ static int teardown(void) {
 // tests
 static void test_main_with_no_arg(void) {
     // arrange
-
     // act
-    int exit_code = system(XSTR(TARGET)
-    " 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system(XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
     // assert
     CU_ASSERT_EQUAL(exit_code, 0);
 }
@@ -55,8 +53,7 @@ static void test_main_with_arg(void) {
     // arrange
 
     // act
-    int exit_code = system(XSTR(TARGET)
-    " -895 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system(XSTR(TARGET) " -895 1>" OUTFILE " 2>" ERRFILE);
     // assert
     CU_ASSERT_EQUAL(exit_code, 0);
 }
@@ -65,8 +62,7 @@ static void test_conversion(void) {
 
     const char *err_txt[] = {};
 
-    int exit_code = system(XSTR(TARGET)
-    " 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system(XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
 
     // assert
     CU_ASSERT_EQUAL(exit_code, 0);
