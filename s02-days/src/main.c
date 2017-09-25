@@ -18,17 +18,13 @@ int main() {
     int is_leap = is_leap_year(start_date.year);
 
     int is_valid = is_valid_date(start_date, is_leap);
-
     if (!is_valid) {
         (void) printf("Invalid date.\n");
         return EXIT_FAILURE;
     }
 
-
     Date end_date = roll_day(start_date, is_leap);
-
     (void) printf("%d %d %d\n", end_date.day, end_date.month, end_date.year);
-
 
     return EXIT_SUCCESS;
 }

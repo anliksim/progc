@@ -113,8 +113,57 @@ static void assert_rolled_date(Date start, Date expected) {
     CU_ASSERT_EQUAL(rolled.year, expected.year);
 }
 
+static void test_eval_leap(void) {
+    // assert that only Feb on leap year returns 1
+    for (int i = 1; i <= 12; ++i) {
+        if (i != 2) {
+            CU_ASSERT_EQUAL(eval_leap(i, 1), 0);
+        }
+        CU_ASSERT_EQUAL(eval_leap(i, 0), 0);
+    }
+    CU_ASSERT_EQUAL(eval_leap(Feb, 1), 1);
+}
+
 static void test_roll_end_of_month(void) {
-    assert_rolled_date((Date) {31, 1, 2017}, (Date) {1, 2, 2017});
+    for (int i = 1; i <= Nov; ++i) {
+        // 2017 is not a leap year
+        assert_rolled_date((Date) {get_max_day(i), i, 2017}, (Date) {1, i + 1, 2017});
+    }
+    // roll year if december
+    assert_rolled_date((Date) {get_max_day(Dec), Dec, 2017}, (Date) {1, Jan, 2018});
+    // Feb on 2016 which is a leap year
+    assert_rolled_date((Date) {get_max_day(Feb), Feb, 2016}, (Date) {get_max_day(Feb) + 1, 2, 2016});
+    assert_rolled_date((Date) {get_max_day(Feb) + 1, Feb, 2016}, (Date) {1, Mar, 2016});
+}
+
+static void test_main_valid(void) {
+
+    const char *out_txt[] = {
+            "28 2 1995\n",
+    };
+    const char *err_txt[] = {};
+
+    int exit_code = system("echo '27 2 1995' | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+
+    CU_ASSERT_EQUAL(exit_code, 0);
+
+    assert_lines(OUTFILE, out_txt, sizeof(out_txt) / sizeof(*out_txt));
+    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
+}
+
+static void test_main_invalid(void) {
+
+    const char *out_txt[] = {
+            "Invalid date.\n",
+    };
+    const char *err_txt[] = {};
+
+    int exit_code = system("echo '27 2 1400' | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+
+    CU_ASSERT_EQUAL(exit_code, 1 << 8);
+
+    assert_lines(OUTFILE, out_txt, sizeof(out_txt) / sizeof(*out_txt));
+    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
 }
 
 /*
@@ -122,13 +171,17 @@ static void test_roll_end_of_month(void) {
  */
 int main(void) {
     // setup, run, teardown
-    TestMainBasic("Days",
+    TestMainBasic("Date rolls",
                   setup, teardown,
                   test_leap_year,
                   test_valid_year,
                   test_valid_month,
                   test_valid_day_no_leap,
                   test_valid_day_leap,
-                  test_valid_date
+                  test_valid_date,
+                  test_eval_leap,
+                  test_roll_end_of_month,
+                  test_main_valid,
+                  test_main_invalid
     );
 }
