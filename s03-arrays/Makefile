@@ -2,7 +2,7 @@
 TARGET        := bin/arrays
 
 # implementation files
-SOURCES       := src/main.c src/days.c
+SOURCES       := src/main.c src/marks.c
 
 # test implementations
 TSTSOURCES    := tests/tests.c
@@ -30,7 +30,7 @@ FULLTARGET    := $(CURDIR)/$(TARGET)
 CC            = gcc
 CFLAGS        = -std=c99 -Wall -g
 CPPFLAGS      = -MD -Isrc -Itests -I$(TSTINCDIR) -I$(CUNITINCDIR) -DTARGET=$(FULLTARGET)
-LDFLAGS       = -static -z muldefs 
+LDFLAGS       = -static -z muldefs
 #LDFLAGS       = -static -Wl,--allow 
 
 # targets which get always visited (without checking any up-to-date state)
@@ -41,7 +41,7 @@ default: $(FULLTARGET)
 	@echo "#### $< built ####"
 
 $(FULLTARGET): mkdir $(OBJECTS) Makefile
-	$(LINK.c) -o $@ $(OBJECTS)
+	$(LINK.c) -o $@ $(OBJECTS) -lm
 
 clean:
 	$(RM) $(TARGET) $(OBJECTS) $(DEPS) $(TSTTARGET) $(TSTOBJECTS) $(TSTDEPS) $(wildcard */*~ *~ tests/*.txt)
@@ -57,7 +57,7 @@ test: $(TSTTARGET)
 	@echo "#### $< executed ####"
 
 $(TSTTARGET): $(FULLTARGET) $(TSTOBJECTS)
-	$(LINK.c) -o $(TSTTARGET) $(TSTOBJECTS) $(OBJECTS) -L$(CUNITLIBDIR) -lcunit -L$(TSTLIBDIR) -lprogctest
+	$(LINK.c) -o $(TSTTARGET) $(TSTOBJECTS) $(OBJECTS) -lm -L$(CUNITLIBDIR) -lcunit -L$(TSTLIBDIR) -lprogctest
 	@echo "#### $@ built ####"
 
 
