@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include "CUnit/Basic.h"
 #include "../../testlib/src/test_utils.h"
-#include "../src/marks.h"
+#include "../src/markmath.h"
 
 #ifndef TARGET // must be given by the make file --> see test target
 #error missing TARGET define
@@ -46,23 +46,7 @@ void assert_equals(const double actual, const double expected) {
     CU_ASSERT_EQUAL(actual, expected);
 }
 
-static void test_main_invalid(void) {
-
-    const char *out_txt[] = {
-            "Invalid date.\n",
-    };
-    const char *err_txt[] = {};
-
-    int exit_code = system("echo '27 2 1400' | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
-
-    CU_ASSERT_EQUAL(exit_code, 1 << 8);
-
-    assert_lines(OUTFILE, out_txt, sizeof(out_txt) / sizeof(*out_txt));
-    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
-}
-
-
-static void test_round_mark(void) {
+static void test_calc_round_mark(void) {
     assert_equals(round_mark(4.9), 5);
     assert_equals(round_mark(4.5), 5);
     assert_equals(round_mark(4.4), 4);
@@ -79,8 +63,81 @@ static void test_calc_mark(void) {
 }
 
 static void test_calc_div_zero(void) {
-    CU_ASSERT_EQUAL(raw_calc_mark(0, 0), 0);
-    CU_ASSERT_EQUAL(calc_mark(0, 0), 0);
+    assert_equals(raw_calc_mark(0, 0), 6);
+    assert_equals(calc_mark(0, 0), 6);
+}
+
+static void test_calc_max_lt_points(void) {
+    assert_equals(raw_calc_mark(2, 1), 6);
+    assert_equals(calc_mark(2, 1), 6);
+}
+
+static void test_struct_whatever(void) {
+
+}
+
+static void test_main_invalid_max_points(void) {
+
+    const char *err_txt[] = {"Invalid max points.\n"};
+
+    int exit_code = system("cat invalid_max | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+
+    CU_ASSERT_EQUAL(exit_code, 1 << 8);
+
+    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
+}
+
+static void test_main_invalid_points(void) {
+
+    const char *err_txt[] = {"Invalid points.\n"};
+
+    int exit_code = system("echo § | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+
+    CU_ASSERT_EQUAL(exit_code, 1 << 8);
+
+    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
+}
+
+static void test_main_invalid_retry_option(void) {
+
+    const char *err_txt[] = {"Invalid retry option.\n"};
+
+    int exit_code = system("cat invalid_retry | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+
+    CU_ASSERT_EQUAL(exit_code, 1 << 8);
+
+    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
+}
+
+static void test_main_example_stats(void) {
+
+    const char *out_txt[] = {
+            "--------------------------------------------------------\n",
+            "Statistics (20 students, 19 points needed for mark 6):\n",
+            "\n",
+            "Mark 6: 2\n",
+            "Mark 5: 7\n",
+            "Mark 4: 7\n",
+            "Mark 3: 4\n",
+            "Mark 2: 0\n",
+            "Mark 1: 0\n",
+            "\n",
+            "Best mark:    6\n",
+            "Worst mark:   3\n",
+            "Average mark: 4.35\n",
+            "Mark >= 4:    16 students (80.00%)\n",
+            "--------------------------------------------------------\n",
+            "\n",
+            "Do you want to set the max again? (1): "
+    };
+    const char *err_txt[] = {};
+
+    int exit_code = system("cat example | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+
+    CU_ASSERT_EQUAL(exit_code, 0);
+
+    assert_lines(OUTFILE, out_txt, sizeof(out_txt) / sizeof(*out_txt));
+    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
 }
 
 /*
@@ -88,10 +145,19 @@ static void test_calc_div_zero(void) {
  */
 int main(void) {
     // setup, run, teardown
-    TestMainBasic("Marks statistics",
+    TestMainBasic("Mark statistics",
                   setup, teardown,
-                  test_round_mark,
+    // markmath.c tests
+                  test_calc_round_mark,
                   test_calc_mark,
-                  test_calc_div_zero
+                  test_calc_div_zero,
+                  test_calc_max_lt_points,
+    // tests
+                  test_struct_whatever,
+    // main.c tests
+                  test_main_invalid_retry_option,
+                  test_main_invalid_max_points,
+                  test_main_invalid_points,
+                  test_main_example_stats
     );
 }

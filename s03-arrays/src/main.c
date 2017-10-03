@@ -1,39 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "marks.h"
+#include "markmath.h"
+#include "stats.h"
 
-typedef struct stats {
-    double best;
-    double worst;
-    double average;
-    int avg_count;
-} Stats;
-
-Stats mark_stats = {0};
-
-void updateBest(double mark) {
-    if (mark > mark_stats.best) {
-        mark_stats.best = mark;
+void print_stats(int max_points) {
+    (void) printf("--------------------------------------------------------\n");
+    (void) printf("Statistics (%d students, %d points needed for mark 6):\n", total(), max_points);
+    (void) printf("\n");
+    for (int k = 6; k >= 1; --k) {
+        (void) printf("Mark %d: %d\n", k, count(k));
     }
+    (void) printf("\n");
+    (void) printf("Best mark:    %d\n", high());
+    (void) printf("Worst mark:   %d\n", low());
+    (void) printf("Average mark: %4.2lf\n", avg());
+    (void) printf("Mark >= 4:    %d students (%4.2lf%%)\n", qs(), qs_percent());
+    (void) printf("--------------------------------------------------------\n");
+    (void) printf("\n");
 }
-
-void updateWorst(double mark) {
-    double worst = mark_stats.worst;
-    if (worst == 0 || mark < worst) {
-        mark_stats.worst = mark;
-    }
-}
-
-void updateAverage(double mark) {
-    mark_stats.average = (mark_stats.average * mark_stats.avg_count + mark) / ++mark_stats.avg_count;
-}
-
-void updateStats(double mark) {
-    updateBest(mark);
-    updateWorst(mark);
-    updateAverage(mark);
-}
-
 
 /**
  *
@@ -41,47 +25,42 @@ void updateStats(double mark) {
  */
 int main() {
 
-    int gtfour = 0;
     int input[100];
     int i = -1;
-    int max = 0;
+    int res;
 
     do {
         ++i;
-        int res = scanf("%d", &input[i]);
-        if (res < 0) {
+        res = scanf("%d", &input[i]);
+        if (res != 1) {
+            (void) fprintf(stderr, "Invalid points.\n");
             return EXIT_FAILURE;
         }
     } while (input[i] != -1 && i < 100);
 
 
+    int max = 0;
     int print = 1;
-    while(print) {
+    while (print == 1) {
 
-        (void) printf("Max:");
-        int res = scanf("%d", &max);
-        if (res < 0) {
+        reset_stats();
+
+        res = scanf("%d", &max);
+        if (res != 1) {
+            (void) fprintf(stderr, "Invalid max points.\n");
             return EXIT_FAILURE;
         }
 
         for (int j = 0; j < i; ++j) {
-            updateStats(calc_mark(input[j], max));
-            (void) printf("%d\n", input[j]);
+            update_stats(calc_mark(input[j], max));
         }
 
-        (void) printf("Statistics (%d students, %d points needed for mark 6)\n", i, input[0]);
+        print_stats(max);
 
-        for (int k = 1; k <= 6; ++k) {
-            (void) printf("Mark %d: x\n", k);
-        }
-
-        (void) printf("Best mark: %1.0lf\n", mark_stats.best);
-        (void) printf("Worst mark: %1.0lf\n", mark_stats.worst);
-        (void) printf("Average mark: %1.0lf\n", mark_stats.average);
-        (void) printf("Mark >= 4: %d students (80.00)\n", gtfour);
-
+        (void) printf("Do you want to set the max again? (1): ");
         res = scanf("%d", &print);
-        if (res < 0) {
+        if (res != 1) {
+            (void) fprintf(stderr, "Invalid retry option.\n");
             return EXIT_FAILURE;
         }
     };

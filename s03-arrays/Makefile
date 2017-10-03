@@ -2,7 +2,7 @@
 TARGET        := bin/arrays
 
 # implementation files
-SOURCES       := src/main.c src/marks.c
+SOURCES       := src/main.c src/markmath.c src/stats.c
 
 # test implementations
 TSTSOURCES    := tests/tests.c
@@ -31,7 +31,7 @@ CC            = gcc
 CFLAGS        = -std=c99 -Wall -g
 CPPFLAGS      = -MD -Isrc -Itests -I$(TSTINCDIR) -I$(CUNITINCDIR) -DTARGET=$(FULLTARGET)
 LDFLAGS       = -static -z muldefs
-#LDFLAGS       = -static -Wl,--allow 
+#LDFLAGS       = -static -Wl,--allow
 
 # targets which get always visited (without checking any up-to-date state)
 .PHONY: default clean test doc mkdir
