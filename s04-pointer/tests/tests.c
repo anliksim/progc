@@ -78,6 +78,7 @@ static void test_main_invalid_retry_option(void) {
     assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
 }
 
+
 static void test_main_example_words(void) {
 
     const char *out_txt[] = {

@@ -6,6 +6,7 @@
 #include <string.h>
 #include <errno.h>
 
+const char *EOI = "ZZZ\n";
 
 /**
  *
@@ -14,31 +15,39 @@
 int main() {
 
 //    char word[20];
-//    char *wordlist[100];
+    char *wordlist[100];
 
     char *line = NULL;
+
+    int i = 0;
 
     do {
 
         size_t size;
         ssize_t length = getline(&line, &size, stdin);
         if (length == -1) {
-            (void) printf("Failed to read line. (errno=%d)", errno);
+            (void) fprintf(stderr, "Failed to read line. (errno=%d)", errno);
             return EXIT_FAILURE;
         }
 
-        char str1[3];
-        char str2[3];
-        strcpy(str1, line);
-        strcpy(str2, "ZZZ");
-
-
         (void) printf("User input: %s", line);
         (void) printf("Char count: %zd\n", length - 1);
-        (void) printf("cmp: %d\n", strcmp(str1, str2));
 
 
-    } while (strcmp(line, "ZZZ") != 0);
+        wordlist[i] = malloc(size + sizeof(char));
+
+        strcpy(wordlist[i], line);
+
+        ++i;
+
+    } while (strcmp(line, EOI) != 0);
+
+    for (int j = 0; j < i; ++j) {
+
+        char *current = wordlist[i];
+        (void) printf("Word: %s\n", wordlist[i]);
+        free(current);
+    }
 
     return EXIT_SUCCESS;
 }
