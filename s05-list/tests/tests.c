@@ -15,8 +15,8 @@
 #include <stdlib.h>
 #include "CUnit/Basic.h"
 #include "../../testlib/src/test_utils.h"
-#include "../src/person.h";
-#include "../src/list.h";
+#include "../src/person.h"
+#include "../src/list.h"
 
 #ifndef TARGET // must be given by the make file --> see test target
 #error missing TARGET define
@@ -47,9 +47,9 @@ void assert_true(const int bool) {
     CU_ASSERT_EQUAL(bool, 1);
 }
 
-void assert_equals(const double actual, const double expected) {
+void assert_equals(const int actual, const int expected) {
     if (actual != expected) {
-        (void) printf("Expected %lf but was %lf\n", actual, expected);
+        (void) printf("Expected %d but was %d\n", actual, expected);
     }
     CU_ASSERT_EQUAL(actual, expected);
 }
@@ -105,35 +105,54 @@ static void test_not_equals(void) {
     assert_true(!equals(p1, p2));
 }
 
-static void test_main_example_words(void) {
+static void test_list_insert(void) {
 
-    const char *out_txt[] = {
-            "Fleischkuegeli\n",
-            "Kaese\n",
-            "Kuchen\n",
-            "Nudelauflauf\n"
-    };
-    const char *err_txt[] = {};
+    Person p1 = {"Meier", "Max", 66};
+    Person p2 = {"Xavier", "Max", 40};
+    Person p3 = {"Ackermann", "Max", 35};
 
-    int exit_code = system("cat example | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    LinkedList list = list_singleton();
+    list.clear();
+    assert_equals(list.size(), 0);
 
-    CU_ASSERT_EQUAL(exit_code, 0);
+    list.insert(p1);
+    list.insert(p2);
+    list.insert(p3);
+    assert_equals(list.size(), 3);
 
-    assert_lines(OUTFILE, out_txt, sizeof(out_txt) / sizeof(*out_txt));
-    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
+    (void) printf("\n");
+    list.show();
+
 }
 
-static void test_main_sorted_words(void) {
+static void test_list_remove(void) {
+
+    Person p1 = {"Meier", "Max", 66};
+    Person p2 = {"Xavier", "Max", 40};
+
+    LinkedList list = list_singleton();
+    list.clear();
+    assert_equals(list.size(), 0);
+
+    list.insert(p1);
+    list.insert(p2);
+    assert_equals(list.size(), 2);
+
+    list.remove(p2);
+    assert_equals(list.size(), 1);
+
+    list.remove(p1);
+    assert_equals(list.size(), 0);
+}
+
+static void test_main_end(void) {
 
     const char *out_txt[] = {
-            "Fleischkuegeli\n",
-            "Kaese\n",
-            "Kuchen\n",
-            "Nudelauflauf\n"
+            "I(nsert), R(emove), S(how), C(lear), E(nd):",
     };
     const char *err_txt[] = {};
 
-    int exit_code = system("cat sorted | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system("echo E | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
 
     CU_ASSERT_EQUAL(exit_code, 0);
 
@@ -152,6 +171,9 @@ int main(void) {
                   test_compare_person_forename,
                   test_compare_person_age,
                   test_equals,
-                  test_not_equals
+                  test_not_equals,
+                  test_list_insert,
+                  test_list_remove,
+                  test_main_end
     );
 }

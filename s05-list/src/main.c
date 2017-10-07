@@ -14,27 +14,25 @@ void flush_stdin() {
  */
 int main() {
 
+    LinkedList persons = list_singleton();
+
     char option;
     do {
         (void) printf("I(nsert), R(emove), S(how), C(lear), E(nd):");
-
-        if (scanf(" %c", &option) < 0) {
-            (void) fprintf(stderr, "Invalid input. (%s)\n", strerror(errno));
-            return EXIT_FAILURE;
-        }
+        (void) scanf(" %c", &option);
 
         switch (option) {
             case 'I':
-                list_insert(read_person());
+                persons.insert(read_person());
                 break;
             case 'R':
-                list_remove(read_person());
+                persons.remove(read_person());
                 break;
             case 'S':
-                list_show();
+                persons.show();
                 break;
             case 'C':
-                list_clear();
+                persons.clear();
                 break;
             default:
                 break;

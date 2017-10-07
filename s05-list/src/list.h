@@ -3,12 +3,20 @@
 
 #include "person.h"
 
-void list_insert(Person person);
+typedef struct {
 
-void list_remove(Person person);
+    void (*insert)(Person);
 
-void list_show();
+    void (*remove)(Person);
 
-void list_clear();
+    void (*show)(void);
+
+    void (*clear)(void);
+
+    int (*size)(void);
+
+} LinkedList;
+
+LinkedList list_singleton(void);
 
 #endif //S05_LIST_LIST_H
