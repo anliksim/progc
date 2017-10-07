@@ -29,11 +29,11 @@ int reduce(char **list, int length, int heap) {
 }
 
 int reduce_on_stack(char **list, int length) {
-    reduce(list, length, 0);
+    return reduce(list, length, 0);
 }
 
 int reduce_on_heap(char **list, int length) {
-    reduce(list, length, 1);
+    return reduce(list, length, 1);
 }
 
 void insertion_sort(char **list, int length) {
