@@ -3,6 +3,6 @@ project(s04_pointer)
 
 set(CMAKE_C_STANDARD 99)
 
-set(SOURCE_FILES src/main.c)
+set(SOURCE_FILES src/main.c src/sort.h src/sort.c)
 
 add_executable(s04_pointer ${SOURCE_FILES})

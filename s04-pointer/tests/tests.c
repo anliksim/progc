@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include "CUnit/Basic.h"
 #include "../../testlib/src/test_utils.h"
+#include "../src/sort.h"
 
 #ifndef TARGET // must be given by the make file --> see test target
 #error missing TARGET define
@@ -45,39 +46,48 @@ void assert_equals(const double actual, const double expected) {
     CU_ASSERT_EQUAL(actual, expected);
 }
 
-static void test_main_invalid_max_points(void) {
-
-    const char *err_txt[] = {"Invalid max points.\n"};
-
-    int exit_code = system("cat invalid_max | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
-
-    CU_ASSERT_EQUAL(exit_code, 1 << 8);
-
-    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
+void assert_string_equals(const char *actual, const char *expected) {
+    int cmp = strcmp(actual, expected);
+    if (cmp != 0) {
+        (void) printf("Expected %s but was %s\n", actual, expected);
+    }
+    CU_ASSERT_EQUAL(cmp, 0);
 }
 
-static void test_main_invalid_points(void) {
+static void test_array_reduce(void) {
 
-    const char *err_txt[] = {"Invalid points.\n"};
+    int length = 4;
+    char *wordlist[4];
+    wordlist[0] = "Test";
+    wordlist[1] = "Test";
+    wordlist[2] = "This";
+    wordlist[3] = "This";
 
-    int exit_code = system("echo § | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    int reduced_length = reduce_on_stack(wordlist, length);
 
-    CU_ASSERT_EQUAL(exit_code, 1 << 8);
-
-    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
+    assert_equals(reduced_length, 2);
+    assert_string_equals(wordlist[0], "Test");
+    assert_string_equals(wordlist[1], "This");
 }
 
-static void test_main_invalid_retry_option(void) {
+static void test_insertion_sort(void) {
 
-    const char *err_txt[] = {"Invalid retry option.\n"};
+    int length = 5;
+    char *wordlist[5];
+    wordlist[0] = "Sxx";
+    wordlist[1] = "Cxx";
+    wordlist[2] = "Bxx";
+    wordlist[3] = "Fxx";
+    wordlist[4] = "Sxx";
 
-    int exit_code = system("cat invalid_retry | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    insertion_sort(wordlist, length);
 
-    CU_ASSERT_EQUAL(exit_code, 1 << 8);
-
-    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
+    assert_string_equals(wordlist[0], "Bxx");
+    assert_string_equals(wordlist[1], "Cxx");
+    assert_string_equals(wordlist[2], "Fxx");
+    assert_string_equals(wordlist[3], "Sxx");
+    assert_string_equals(wordlist[4], "Sxx");
 }
-
 
 static void test_main_example_words(void) {
 
@@ -97,6 +107,35 @@ static void test_main_example_words(void) {
     assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
 }
 
+static void test_main_sorted_words(void) {
+
+    const char *out_txt[] = {
+            "Fleischkuegeli\n",
+            "Kaese\n",
+            "Kuchen\n",
+            "Nudelauflauf\n"
+    };
+    const char *err_txt[] = {};
+
+    int exit_code = system("cat sorted | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+
+    CU_ASSERT_EQUAL(exit_code, 0);
+
+    assert_lines(OUTFILE, out_txt, sizeof(out_txt) / sizeof(*out_txt));
+    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
+}
+
+static void test_main_invalid_input(void) {
+
+    const char *err_txt[] = {"Failed to read line. (errno=2)\n"};
+
+    int exit_code = system("echo EOF | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+
+    CU_ASSERT_EQUAL(exit_code, 1 << 8);
+
+    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
+}
+
 /*
  * @brief Registers and runs the tests.
  */
@@ -104,6 +143,10 @@ int main(void) {
     // setup, run, teardown
     TestMainBasic("Mark statistics",
                   setup, teardown,
-                  test_main_example_words
+                  test_array_reduce,
+                  test_insertion_sort,
+                  test_main_example_words,
+                  test_main_sorted_words,
+                  test_main_invalid_input
     );
 }

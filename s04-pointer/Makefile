@@ -2,7 +2,7 @@
 TARGET        := bin/pointer
 
 # implementation files
-SOURCES       := src/main.c
+SOURCES       := src/main.c src/sort.c
 
 # test implementations
 TSTSOURCES    := tests/tests.c
