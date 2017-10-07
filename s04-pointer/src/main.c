@@ -24,7 +24,7 @@ int main() {
         size_t size;
         ssize_t length = getline(&line, &size, stdin);
         if (length == -1) {
-            (void) fprintf(stderr, "Failed to read line. (errno=%d)\n", errno);
+            (void) fprintf(stderr, "IOException: %s\n", strerror(errno));
             return EXIT_FAILURE;
         }
 

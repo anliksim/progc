@@ -127,7 +127,7 @@ static void test_main_sorted_words(void) {
 
 static void test_main_invalid_input(void) {
 
-    const char *err_txt[] = {"Failed to read line. (errno=2)\n"};
+    const char *err_txt[] = {"IOException: No such file or directory\n"};
 
     int exit_code = system("echo EOF | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
 
