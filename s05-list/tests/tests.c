@@ -144,7 +144,7 @@ static void test_list_remove(void) {
 static void test_main_end(void) {
 
     const char *out_txt[] = {
-            "I(nsert), R(emove), S(how), C(lear), E(nd):",
+            "I(nsert), R(emove), S(how), C(lear), E(nd):\n",
     };
     const char *err_txt[] = {};
 
@@ -155,6 +155,40 @@ static void test_main_end(void) {
     assert_lines(OUTFILE, out_txt, sizeof(out_txt) / sizeof(*out_txt));
     assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
 }
+
+static void test_main_flow(void) {
+
+    const char *out_txt[] = {
+            // first insert
+            "I(nsert), R(emove), S(how), C(lear), E(nd):Name:First name:Age:\n",
+            // second insert
+            "I(nsert), R(emove), S(how), C(lear), E(nd):Name:First name:Age:\n",
+            // show
+            "I(nsert), R(emove), S(how), C(lear), E(nd):Max, Muster, 25\n",
+            "Max, Muster, 35\n",
+            "\n",
+            // remove first person
+            "I(nsert), R(emove), S(how), C(lear), E(nd):Name:First name:Age:\n",
+            //show
+            "I(nsert), R(emove), S(how), C(lear), E(nd):Max, Muster, 25\n",
+            "\n",
+            // clear
+            "I(nsert), R(emove), S(how), C(lear), E(nd):\n",
+            // show
+            "I(nsert), R(emove), S(how), C(lear), E(nd):\n",
+            // end
+            "I(nsert), R(emove), S(how), C(lear), E(nd):\n"
+    };
+    const char *err_txt[] = {};
+
+    int exit_code = system("cat flow | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+
+    CU_ASSERT_EQUAL(exit_code, 0);
+
+    assert_lines(OUTFILE, out_txt, sizeof(out_txt) / sizeof(*out_txt));
+    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
+}
+
 
 /*
  * @brief Registers and runs the tests.
@@ -170,6 +204,7 @@ int main(void) {
                   test_not_equals,
                   test_list_insert,
                   test_list_remove,
-                  test_main_end
+                  test_main_end,
+                  test_main_flow
     );
 }

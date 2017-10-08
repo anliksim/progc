@@ -32,6 +32,7 @@ int main() {
             default:
                 break;
         }
+        (void) printf("\n");
 
     } while (option != 'E');
 
