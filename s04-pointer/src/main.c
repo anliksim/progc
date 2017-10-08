@@ -8,11 +8,15 @@
 #include <errno.h>
 #include "sort.h"
 
+/**
+ * End of input
+ */
 const char *EOI = "ZZZ\n";
 
 /**
+ * Reads words until ZZZ is entered and then prints them to the stdout sorted.
  *
- * @return exit code
+ * @return exit code 0 if successful, 1 if not
  */
 int main()
 {
@@ -38,7 +42,9 @@ int main()
     int length = i - 1;
     insertion_sort(word_list, length);
     length = reduce_on_heap(word_list, length);
-    print(word_list, length);
+
+    // passing a const pointer as print should not modify our list
+    print((const char **) word_list, length);
 
     for (int j = 0; j < i; ++j) {
         free(word_list[j]);

@@ -61,36 +61,53 @@ void assert_string_equals(const char *actual, const char *expected)
 static void test_array_reduce(void)
 {
     int length = 4;
-    char *wordlist[4];
-    wordlist[0] = "Test";
-    wordlist[1] = "Test";
-    wordlist[2] = "This";
-    wordlist[3] = "This";
+    char *word_list[4];
+    word_list[0] = "Test";
+    word_list[1] = "Test";
+    word_list[2] = "This";
+    word_list[3] = "This";
 
-    int reduced_length = reduce_on_stack(wordlist, length);
+    int reduced_length = reduce_on_stack(word_list, length);
 
     assert_equals(reduced_length, 2);
-    assert_string_equals(wordlist[0], "Test");
-    assert_string_equals(wordlist[1], "This");
+    assert_string_equals(word_list[0], "Test");
+    assert_string_equals(word_list[1], "This");
 }
 
 static void test_insertion_sort(void)
 {
     int length = 5;
-    char *wordlist[5];
-    wordlist[0] = "Sxx";
-    wordlist[1] = "Cxx";
-    wordlist[2] = "Bxx";
-    wordlist[3] = "Fxx";
-    wordlist[4] = "Sxx";
+    char *word_list[5];
+    word_list[0] = "Sxx";
+    word_list[1] = "Cxx";
+    word_list[2] = "Bxx";
+    word_list[3] = "Fxx";
+    word_list[4] = "Sxx";
 
-    insertion_sort(wordlist, length);
+    insertion_sort(word_list, length);
 
-    assert_string_equals(wordlist[0], "Bxx");
-    assert_string_equals(wordlist[1], "Cxx");
-    assert_string_equals(wordlist[2], "Fxx");
-    assert_string_equals(wordlist[3], "Sxx");
-    assert_string_equals(wordlist[4], "Sxx");
+    assert_string_equals(word_list[0], "Bxx");
+    assert_string_equals(word_list[1], "Cxx");
+    assert_string_equals(word_list[2], "Fxx");
+    assert_string_equals(word_list[3], "Sxx");
+    assert_string_equals(word_list[4], "Sxx");
+}
+
+static void test_main_case_insensitive(void)
+{
+    const char *out_txt[] = {
+            "any\n",
+            "Word\n",
+    };
+    const char *err_txt[] = {};
+
+    int exit_code = system(
+            "echo 'any\nWord\nZZZ\n' | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+
+    CU_ASSERT_EQUAL(exit_code, 0);
+
+    assert_lines(OUTFILE, out_txt, sizeof(out_txt) / sizeof(*out_txt));
+    assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
 }
 
 static void test_main_example_words(void)
@@ -149,10 +166,11 @@ static void test_main_invalid_input(void)
 int main(void)
 {
     // setup, run, teardown
-    TestMainBasic("Mark statistics",
+    TestMainBasic("Word list",
                   setup, teardown,
                   test_array_reduce,
                   test_insertion_sort,
+                  test_main_case_insensitive,
                   test_main_example_words,
                   test_main_sorted_words,
                   test_main_invalid_input

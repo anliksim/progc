@@ -6,7 +6,7 @@
 /**
  * Person management CLI
  *
- * @return exit code 1 if properly terminated with input 'E'
+ * @return exit code 0 if properly terminated with input 'E'
  */
 int main()
 {
