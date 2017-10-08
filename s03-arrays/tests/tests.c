@@ -27,33 +27,39 @@
 #define ERRFILE "stderr.txt"
 
 // setup & cleanup
-static int setup(void) {
+static int setup(void)
+{
     remove_file_if_exists(OUTFILE);
     remove_file_if_exists(ERRFILE);
     return 0; // success
 }
 
-static int teardown(void) {
+static int teardown(void)
+{
     // Do nothing.
-    // Especially: do not remove result files - they are removed in int setup(void) *before* running a test.
+    // Especially: do not remove result files -
+    // they are removed in int setup(void) *before* running a test.
     return 0; // success
 }
 
-void assert_equals(const double actual, const double expected) {
+void assert_equals(const double actual, const double expected)
+{
     if (actual != expected) {
         (void) printf("Expected %lf but was %lf\n", actual, expected);
     }
     CU_ASSERT_EQUAL(actual, expected);
 }
 
-static void test_calc_round_mark(void) {
+static void test_calc_round_mark(void)
+{
     assert_equals(round_mark(4.9), 5);
     assert_equals(round_mark(4.5), 5);
     assert_equals(round_mark(4.4), 4);
     assert_equals(round_mark(4.1), 4);
 }
 
-static void test_calc_mark(void) {
+static void test_calc_mark(void)
+{
     assert_equals(raw_calc_mark(10, 20), 3.5);
     assert_equals(calc_mark(10, 20), 4);
     assert_equals(raw_calc_mark(20, 20), 6.0);
@@ -62,54 +68,59 @@ static void test_calc_mark(void) {
     assert_equals(calc_mark(0, 20), 1);
 }
 
-static void test_calc_div_zero(void) {
+static void test_calc_div_zero(void)
+{
     assert_equals(raw_calc_mark(0, 0), 6);
     assert_equals(calc_mark(0, 0), 6);
 }
 
-static void test_calc_max_lt_points(void) {
+static void test_calc_max_lt_points(void)
+{
     assert_equals(raw_calc_mark(2, 1), 6);
     assert_equals(calc_mark(2, 1), 6);
 }
 
-static void test_struct_whatever(void) {
-
-}
-
-static void test_main_invalid_max_points(void) {
+static void test_main_invalid_max_points(void)
+{
 
     const char *err_txt[] = {"Invalid max points.\n"};
 
-    int exit_code = system("cat invalid_max | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system(
+            "cat invalid_max | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
 
     CU_ASSERT_EQUAL(exit_code, 1 << 8);
 
     assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
 }
 
-static void test_main_invalid_points(void) {
+static void test_main_invalid_points(void)
+{
 
     const char *err_txt[] = {"Invalid points.\n"};
 
-    int exit_code = system("echo § | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system(
+            "echo § | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
 
     CU_ASSERT_EQUAL(exit_code, 1 << 8);
 
     assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
 }
 
-static void test_main_invalid_retry_option(void) {
+static void test_main_invalid_retry_option(void)
+{
 
     const char *err_txt[] = {"Invalid retry option.\n"};
 
-    int exit_code = system("cat invalid_retry | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system(
+            "cat invalid_retry | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
 
     CU_ASSERT_EQUAL(exit_code, 1 << 8);
 
     assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
 }
 
-static void test_main_example_stats(void) {
+static void test_main_example_stats(void)
+{
 
     const char *out_txt[] = {
             "--------------------------------------------------------\n",
@@ -132,7 +143,8 @@ static void test_main_example_stats(void) {
     };
     const char *err_txt[] = {};
 
-    int exit_code = system("cat example | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system(
+            "cat example | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
 
     CU_ASSERT_EQUAL(exit_code, 0);
 
@@ -143,7 +155,8 @@ static void test_main_example_stats(void) {
 /*
  * @brief Registers and runs the tests.
  */
-int main(void) {
+int main(void)
+{
     // setup, run, teardown
     TestMainBasic("Mark statistics",
                   setup, teardown,
@@ -152,8 +165,6 @@ int main(void) {
                   test_calc_mark,
                   test_calc_div_zero,
                   test_calc_max_lt_points,
-    // tests
-                  test_struct_whatever,
     // main.c tests
                   test_main_invalid_retry_option,
                   test_main_invalid_max_points,

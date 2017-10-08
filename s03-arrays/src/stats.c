@@ -18,77 +18,90 @@ typedef struct statistics {
     Count count;
 } Stats;
 
-Stats stats;
+static Stats stats = {{0},
+                      {0}};
 
-void update_best(int mark) {
+static void update_best(const int mark)
+{
     if (mark > stats.mark.best) {
         stats.mark.best = mark;
     }
 }
 
-void update_worst(int mark) {
+static void update_worst(const int mark)
+{
     int worst = stats.mark.worst;
     if (worst == 0 || mark < worst) {
         stats.mark.worst = mark;
     }
 }
 
-void update_range(int mark) {
+static void update_range(const int mark)
+{
     update_best(mark);
     update_worst(mark);
     stats.mark.all += mark;
 }
 
-void update_gte_four(int mark) {
+static void update_gte_four(const int mark)
+{
     if (mark >= 4) {
         ++stats.count.gte_four;
     }
 }
 
-void update_mark_count(int mark) {
+static void update_mark_count(const int mark)
+{
     ++stats.count.total;
     ++stats.count.mark[mark - 1];
 };
 
 // public API
 
-void reset_stats() {
-    Mark new_mark = {0};
-    stats.mark = new_mark;
-    Count new_count = {0};
-    stats.count = new_count;
+void reset_stats()
+{
+    stats.mark = (Mark) {0};
+    stats.count = (Count) {0};
 }
 
-void update_stats(int mark) {
+void update_stats(const int mark)
+{
     update_mark_count(mark);
     update_gte_four(mark);
     update_range(mark);
 }
 
-int total() {
+int total()
+{
     return stats.count.total;
 }
 
-int low() {
+int low()
+{
     return stats.mark.worst;
 }
 
-int high() {
+int high()
+{
     return stats.mark.best;
 }
 
-double avg() {
+double avg()
+{
     return (double) stats.mark.all / stats.count.total;
 }
 
-int qs() {
+int qs()
+{
     return stats.count.gte_four;
 }
 
-double qs_percent() {
+double qs_percent()
+{
     return (double) qs() / stats.count.total * 100.0;
 };
 
-int count(int mark) {
+int count(const int mark)
+{
     return stats.count.mark[mark - 1];
 }

@@ -3,9 +3,11 @@
 #include "markmath.h"
 #include "stats.h"
 
-void print_stats(int max_points) {
+void print_stats(int max_points)
+{
     (void) printf("--------------------------------------------------------\n");
-    (void) printf("Statistics (%d students, %d points needed for mark 6):\n", total(), max_points);
+    (void) printf("Statistics (%d students, %d points needed for mark 6):\n",
+                  total(), max_points);
     (void) printf("\n");
     for (int k = 6; k >= 1; --k) {
         (void) printf("Mark %d: %d\n", k, count(k));
@@ -20,10 +22,12 @@ void print_stats(int max_points) {
 }
 
 /**
+ * Mark statistic generator
  *
- * @return exit code
+ * @return exit code 0 if successful, 1 if error on read
  */
-int main() {
+int main()
+{
 
     int input[100];
     int i = -1;
