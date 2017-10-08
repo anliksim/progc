@@ -13,16 +13,15 @@ static int size = 0;
 static void list_insert(Person person) {
 
     Node *prev = &head;
-    while (prev->next != &head) {
+    while (compare(person, prev->next->person) > 0 && prev->next != &head) {
         prev = prev->next;
     }
-
     Node *el = malloc(sizeof(Node));
     if (el == NULL) {
         return;
     }
     el->person = person;
-    el->next = &head;
+    el->next = prev->next;
     prev->next = el;
 
     ++size;

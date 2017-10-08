@@ -1,12 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
-#include <memory.h>
 #include "list.h"
-
-void flush_stdin() {
-    while (getchar() != '\n');
-}
 
 /**
  *
@@ -20,6 +14,7 @@ int main() {
     do {
         (void) printf("I(nsert), R(emove), S(how), C(lear), E(nd):");
         (void) scanf(" %c", &option);
+        flush_stdin();
 
         switch (option) {
             case 'I':
@@ -37,7 +32,6 @@ int main() {
             default:
                 break;
         }
-        flush_stdin();
 
     } while (option != 'E');
 

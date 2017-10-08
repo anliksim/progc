@@ -119,10 +119,6 @@ static void test_list_insert(void) {
     list.insert(p2);
     list.insert(p3);
     assert_equals(list.size(), 3);
-
-    (void) printf("\n");
-    list.show();
-
 }
 
 static void test_list_remove(void) {

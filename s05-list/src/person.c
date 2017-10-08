@@ -1,18 +1,29 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include "person.h"
+
+void flush_stdin() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+static void read_name(char *name) {
+    (void) scanf("%19[^\n]", name);
+    flush_stdin();
+}
 
 Person read_person() {
 
     Person person = {0};
 
     (void) printf("Name:");
-    (void) scanf("%s", person.name);
+    read_name(person.name);
+
     (void) printf("First name:");
-    (void) scanf("%s", person.forename);
+    read_name(person.forename);
+
     (void) printf("Age:");
-    (void) scanf("%d", &person.age);
+    (void) scanf("%u[^\n]", &person.age);
 
     return person;
 }
@@ -27,11 +38,11 @@ int equals(Person p1, Person p2) {
            strcmp(p1.forename, p2.forename) == 0;
 }
 
-int compare_age(unsigned age1, unsigned age2) {
+static int compare_age(unsigned age1, unsigned age2) {
     return age1 == age2 ? 0 : age1 - age2;
 }
 
-int compare_forename(Person p1, Person p2) {
+static int compare_forename(Person p1, Person p2) {
     int forename_cmp = strcmp(p1.forename, p2.forename);
     return forename_cmp == 0 ? compare_age(p1.age, p2.age) : forename_cmp;
 }
