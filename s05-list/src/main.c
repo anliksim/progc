@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "list.h"
+#include "console.h"
 
 /**
+ * Person management CLI
  *
- * @return exit code
+ * @return exit code 1 if properly terminated with input 'E'
  */
-int main() {
+int main()
+{
 
     LinkedList persons = list_singleton();
 

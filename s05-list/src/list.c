@@ -10,24 +10,23 @@ typedef struct node {
 static Node head = {{{0}}, &head};
 static int size = 0;
 
-static void list_insert(Person person) {
-
+static void list_insert(const Person person)
+{
     Node *prev = &head;
     while (compare(person, prev->next->person) > 0 && prev->next != &head) {
         prev = prev->next;
     }
     Node *el = malloc(sizeof(Node));
-    if (el == NULL) {
-        return;
+    if (el != NULL) {
+        el->person = person;
+        el->next = prev->next;
+        prev->next = el;
+        ++size;
     }
-    el->person = person;
-    el->next = prev->next;
-    prev->next = el;
-
-    ++size;
 }
 
-static void list_remove(Person person) {
+static void list_remove(const Person person)
+{
     Node *prev = &head;
     Node *el = head.next;
     while (el != &head) {
@@ -42,7 +41,8 @@ static void list_remove(Person person) {
     --size;
 }
 
-static Node *for_each(Node *(*func)(Node *)) {
+static Node *for_each(Node *(*func)(Node *))
+{
     Node *el = head.next;
     while (el != &head) {
         el = func(el);
@@ -50,32 +50,38 @@ static Node *for_each(Node *(*func)(Node *)) {
     return el;
 }
 
-static Node *_print(Node *el) {
+static Node *_print(Node *el)
+{
     print(el->person);
     return el->next;
 }
 
-static void list_show(void) {
+static void list_show(void)
+{
     (void) for_each(&_print);
 }
 
-static Node *_clear(Node *el) {
+static Node *_clear(Node *el)
+{
     Node *tmp = el;
     el = tmp->next;
     free(tmp);
     return el;
 }
 
-static void list_clear(void) {
+static void list_clear(void)
+{
     head.next = for_each(&_clear);
     size = 0;
 }
 
-static int list_size(void) {
+static int list_size(void)
+{
     return size;
 }
 
-LinkedList list_singleton() {
+LinkedList list_singleton()
+{
     LinkedList list = {
             &list_insert,
             &list_remove,

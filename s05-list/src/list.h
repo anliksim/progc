@@ -17,6 +17,12 @@ typedef struct {
 
 } LinkedList;
 
+/**
+ * Get an instance of a cyclic linked list.
+ * Each call returns the same instance.
+ *
+ * @return linked list instance
+ */
 LinkedList list_singleton(void);
 
 #endif //S05_LIST_LIST_H

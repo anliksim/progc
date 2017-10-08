@@ -2,7 +2,7 @@
 TARGET        := bin/list
 
 # implementation files
-SOURCES       := src/main.c src/list.c src/person.c
+SOURCES       := src/main.c src/list.c src/person.c src/console.c
 
 # test implementations
 TSTSOURCES    := tests/tests.c

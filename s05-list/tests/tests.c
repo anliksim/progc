@@ -28,33 +28,38 @@
 #define ERRFILE "stderr.txt"
 
 // setup & cleanup
-static int setup(void) {
+static int setup(void)
+{
     remove_file_if_exists(OUTFILE);
     remove_file_if_exists(ERRFILE);
     return 0; // success
 }
 
-static int teardown(void) {
+static int teardown(void)
+{
     // Do nothing.
     // Especially: do not remove result files - they are removed in int setup(void) *before* running a test.
     return 0; // success
 }
 
-void assert_true(const int bool) {
+void assert_true(const int bool)
+{
     if (!bool) {
         (void) printf("Expected 1 but was %d.\n", bool);
     }
     CU_ASSERT_EQUAL(bool, 1);
 }
 
-void assert_equals(const int actual, const int expected) {
+void assert_equals(const int actual, const int expected)
+{
     if (actual != expected) {
         (void) printf("Expected %d but was %d\n", actual, expected);
     }
     CU_ASSERT_EQUAL(actual, expected);
 }
 
-void assert_string_equals(const char *actual, const char *expected) {
+void assert_string_equals(const char *actual, const char *expected)
+{
     int cmp = strcmp(actual, expected);
     if (cmp != 0) {
         (void) printf("Expected %s but was %s\n", actual, expected);
@@ -62,7 +67,8 @@ void assert_string_equals(const char *actual, const char *expected) {
     CU_ASSERT_EQUAL(cmp, 0);
 }
 
-static void test_compare_person_name(void) {
+static void test_compare_person_name(void)
+{
 
     Person p1 = {"Meier", "Max", 40};
     Person p2 = {"Muster", "Max", 50};
@@ -71,7 +77,8 @@ static void test_compare_person_name(void) {
     assert_true(compare(p2, p1) > 0);
 }
 
-static void test_compare_person_forename(void) {
+static void test_compare_person_forename(void)
+{
 
     Person p1 = {"Meier", "Max", 40};
     Person p2 = {"Meier", "Moritz", 50};
@@ -80,7 +87,8 @@ static void test_compare_person_forename(void) {
     assert_true(compare(p2, p1) > 0);
 }
 
-static void test_compare_person_age(void) {
+static void test_compare_person_age(void)
+{
 
     Person p1 = {"Meier", "Max", 40};
     Person p2 = {"Meier", "Max", 50};
@@ -89,7 +97,8 @@ static void test_compare_person_age(void) {
     assert_true(compare(p2, p1) > 0);
 }
 
-static void test_equals(void) {
+static void test_equals(void)
+{
 
     Person p1 = {"Meier", "Max", 50};
     Person p2 = {"Meier", "Max", 50};
@@ -97,7 +106,8 @@ static void test_equals(void) {
     assert_true(equals(p1, p2));
 }
 
-static void test_not_equals(void) {
+static void test_not_equals(void)
+{
 
     Person p1 = {"Meier", "Max", 50};
     Person p2 = {"Muster", "Max", 50};
@@ -105,7 +115,8 @@ static void test_not_equals(void) {
     assert_true(!equals(p1, p2));
 }
 
-static void test_list_insert(void) {
+static void test_list_insert(void)
+{
 
     Person p1 = {"Meier", "Max", 66};
     Person p2 = {"Xavier", "Max", 40};
@@ -121,7 +132,8 @@ static void test_list_insert(void) {
     assert_equals(list.size(), 3);
 }
 
-static void test_list_remove(void) {
+static void test_list_remove(void)
+{
 
     Person p1 = {"Meier", "Max", 66};
     Person p2 = {"Xavier", "Max", 40};
@@ -141,14 +153,16 @@ static void test_list_remove(void) {
     assert_equals(list.size(), 0);
 }
 
-static void test_main_end(void) {
+static void test_main_end(void)
+{
 
     const char *out_txt[] = {
             "I(nsert), R(emove), S(how), C(lear), E(nd):\n",
     };
     const char *err_txt[] = {};
 
-    int exit_code = system("echo E | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system(
+            "echo E | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
 
     CU_ASSERT_EQUAL(exit_code, 0);
 
@@ -156,7 +170,8 @@ static void test_main_end(void) {
     assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
 }
 
-static void test_main_flow(void) {
+static void test_main_flow(void)
+{
 
     const char *out_txt[] = {
             // first insert
@@ -181,7 +196,8 @@ static void test_main_flow(void) {
     };
     const char *err_txt[] = {};
 
-    int exit_code = system("cat flow | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system(
+            "cat flow | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
 
     CU_ASSERT_EQUAL(exit_code, 0);
 
@@ -193,7 +209,8 @@ static void test_main_flow(void) {
 /*
  * @brief Registers and runs the tests.
  */
-int main(void) {
+int main(void)
+{
     // setup, run, teardown
     TestMainBasic("Linked list",
                   setup, teardown,
