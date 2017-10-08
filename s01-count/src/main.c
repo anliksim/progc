@@ -1,16 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int isTab(int input) {
+static int is_tab(const int input)
+{
     return input == '\t';
 }
 
-int isSpace(int input) {
+static int is_space(const int input)
+{
     return input == ' ';
 }
 
-int isDelimiter(int input) {
-    return isTab(input) || isSpace(input);
+static int is_delimiter(const int input)
+{
+    return is_tab(input) || is_space(input);
 }
 
 /**
@@ -19,13 +22,14 @@ int isDelimiter(int input) {
  * If an input contains multiple delimiters between words or
  * additional delimiters before and after, the count is still correct.
  *
- * @return exit code
+ * @return exit code 0 if successful, otherwise 1
  */
-int main() {
+int main()
+{
 
-    int charCount = 0;
-    int wordCount = 0;
-    int swap = 1;
+    int char_count = 0;
+    int word_count = 0;
+    unsigned swap = 1;
 
     int in;
     while ((in = getchar()) != '\n') {
@@ -38,22 +42,22 @@ int main() {
             return EXIT_FAILURE;
         }
 
-        ++charCount;
+        ++char_count;
 
         /*
          * Count as word if a char is coming after a delimiter
          * or if it is the first char in line
          */
-        if (~isDelimiter(in) & swap) {
-            ++wordCount;
+        if (~is_delimiter(in) & swap) {
+            ++word_count;
             swap = swap ^ 1;
-        } else if (isDelimiter(in) & ~swap) {
+        } else if (is_delimiter(in) & ~swap) {
             swap = swap ^ 1;
         }
     }
 
-    (void) printf("Char count: %d\n", charCount);
-    (void) printf("Word count: %d\n", wordCount);
+    (void) printf("Char count: %d\n", char_count);
+    (void) printf("Word count: %d\n", word_count);
 
     return EXIT_SUCCESS;
 }
