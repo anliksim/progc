@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "CUnit/Basic.h"
-#include "test_utils.h"
+#include "../../testlib/src/test_utils.h"
 
 #ifndef TARGET // must be given by the make file --> see test target
 #error missing TARGET define
@@ -28,38 +28,40 @@
 #define INPUT "input"
 
 // setup & cleanup
-static int setup(void) {
+static int setup(void)
+{
     remove_file_if_exists(OUTFILE);
     remove_file_if_exists(ERRFILE);
     return 0; // success
 }
 
-static int teardown(void) {
+static int teardown(void)
+{
     // Do nothing.
-    // Especially: do not remove result files - they are removed in int setup(void) *before* running a test.
+    // Especially: do not remove result files -
+    // they are removed in int setup(void) *before* running a test.
     return 0; // success
 }
 
 // tests
-static void test_main_with_no_arg(void) {
-    // arrange
+static void test_main_with_no_arg(void)
+{
     // act
     int exit_code = system(XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
     // assert
     CU_ASSERT_EQUAL(exit_code, 0);
 }
 
-static void test_main_with_arg(void) {
-    // arrange
-
+static void test_main_with_arg(void)
+{
     // act
     int exit_code = system(XSTR(TARGET) " -895 1>" OUTFILE " 2>" ERRFILE);
     // assert
     CU_ASSERT_EQUAL(exit_code, 0);
 }
 
-static void test_conversion(void) {
-
+static void test_conversion(void)
+{
     const char *err_txt[] = {};
 
     int exit_code = system(XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
@@ -80,7 +82,8 @@ static void test_conversion(void) {
 /*
  * @brief Registers and runs the tests.
  */
-int main(void) {
+int main(void)
+{
     // setup, run, teardown
     TestMainBasic("Degree Conversion",
                   setup,
