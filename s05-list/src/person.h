@@ -6,7 +6,7 @@
 typedef struct {
     char name[NAME_LENGTH];
     char forename[NAME_LENGTH];
-    unsigned age;
+    __uint8_t age;
 } Person;
 
 /**

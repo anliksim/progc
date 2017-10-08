@@ -20,7 +20,7 @@ Person read_person()
     read_name(person.forename);
 
     (void) printf("Age:");
-    (void) scanf("%u[^\n]", &person.age);
+    (void) scanf("%hhu[^\n]", &person.age);
 
     return person;
 }
@@ -37,7 +37,7 @@ int equals(const Person p1, const Person p2)
            strcmp(p1.forename, p2.forename) == 0;
 }
 
-static int compare_age(const unsigned age1, const unsigned age2)
+static int compare_age(const __uint8_t age1, const __uint8_t age2)
 {
     return age1 == age2 ? 0 : age1 - age2;
 }

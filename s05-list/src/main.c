@@ -10,7 +10,6 @@
  */
 int main()
 {
-
     LinkedList persons = list_singleton();
 
     char option;

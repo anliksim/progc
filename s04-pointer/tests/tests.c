@@ -27,26 +27,30 @@
 #define ERRFILE "stderr.txt"
 
 // setup & cleanup
-static int setup(void) {
+static int setup(void)
+{
     remove_file_if_exists(OUTFILE);
     remove_file_if_exists(ERRFILE);
     return 0; // success
 }
 
-static int teardown(void) {
+static int teardown(void)
+{
     // Do nothing.
     // Especially: do not remove result files - they are removed in int setup(void) *before* running a test.
     return 0; // success
 }
 
-void assert_equals(const double actual, const double expected) {
+void assert_equals(const double actual, const double expected)
+{
     if (actual != expected) {
         (void) printf("Expected %lf but was %lf\n", actual, expected);
     }
     CU_ASSERT_EQUAL(actual, expected);
 }
 
-void assert_string_equals(const char *actual, const char *expected) {
+void assert_string_equals(const char *actual, const char *expected)
+{
     int cmp = strcmp(actual, expected);
     if (cmp != 0) {
         (void) printf("Expected %s but was %s\n", actual, expected);
@@ -54,8 +58,8 @@ void assert_string_equals(const char *actual, const char *expected) {
     CU_ASSERT_EQUAL(cmp, 0);
 }
 
-static void test_array_reduce(void) {
-
+static void test_array_reduce(void)
+{
     int length = 4;
     char *wordlist[4];
     wordlist[0] = "Test";
@@ -70,8 +74,8 @@ static void test_array_reduce(void) {
     assert_string_equals(wordlist[1], "This");
 }
 
-static void test_insertion_sort(void) {
-
+static void test_insertion_sort(void)
+{
     int length = 5;
     char *wordlist[5];
     wordlist[0] = "Sxx";
@@ -89,8 +93,8 @@ static void test_insertion_sort(void) {
     assert_string_equals(wordlist[4], "Sxx");
 }
 
-static void test_main_example_words(void) {
-
+static void test_main_example_words(void)
+{
     const char *out_txt[] = {
             "Fleischkuegeli\n",
             "Kaese\n",
@@ -99,7 +103,8 @@ static void test_main_example_words(void) {
     };
     const char *err_txt[] = {};
 
-    int exit_code = system("cat example | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system(
+            "cat example | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
 
     CU_ASSERT_EQUAL(exit_code, 0);
 
@@ -107,8 +112,8 @@ static void test_main_example_words(void) {
     assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
 }
 
-static void test_main_sorted_words(void) {
-
+static void test_main_sorted_words(void)
+{
     const char *out_txt[] = {
             "Fleischkuegeli\n",
             "Kaese\n",
@@ -117,7 +122,8 @@ static void test_main_sorted_words(void) {
     };
     const char *err_txt[] = {};
 
-    int exit_code = system("cat sorted | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system(
+            "cat sorted | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
 
     CU_ASSERT_EQUAL(exit_code, 0);
 
@@ -125,11 +131,12 @@ static void test_main_sorted_words(void) {
     assert_lines(ERRFILE, err_txt, sizeof(err_txt) / sizeof(*err_txt));
 }
 
-static void test_main_invalid_input(void) {
-
+static void test_main_invalid_input(void)
+{
     const char *err_txt[] = {"IOException: No such file or directory\n"};
 
-    int exit_code = system("echo EOF | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
+    int exit_code = system(
+            "echo EOF | " XSTR(TARGET) " 1>" OUTFILE " 2>" ERRFILE);
 
     CU_ASSERT_EQUAL(exit_code, 1 << 8);
 
@@ -139,7 +146,8 @@ static void test_main_invalid_input(void) {
 /*
  * @brief Registers and runs the tests.
  */
-int main(void) {
+int main(void)
+{
     // setup, run, teardown
     TestMainBasic("Mark statistics",
                   setup, teardown,
